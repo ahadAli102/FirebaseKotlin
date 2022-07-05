@@ -3,16 +3,22 @@ package com.ahad.firebasekotlin.authentication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import com.ahad.firebasekotlin.R
 import com.ahad.firebasekotlin.realtime.RealtimeActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
+    //firebase
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        firebaseAuth = FirebaseAuth.getInstance()
         button_sign_in.setOnClickListener {
             val email = edit_text_email.text.toString().trim()
             val password = edit_text_password.text.toString().trim()
@@ -50,13 +56,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun userLogin(email: String, password: String) {
-        checkUserVerified()
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                checkUserVerified()
+            } else {
+                Log.d(TAG, "userLogin: not successful ${task.exception?.message.toString()}")
+                Toast.makeText(this@LoginActivity,  task.exception?.message.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            Log.d(TAG, "userLogin: failed ${e.message.toString()}")
+            Toast.makeText(this@LoginActivity, "" + e.message.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
     private fun checkUserVerified(){
-        val intent = Intent(this@LoginActivity, RealtimeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-        finish()
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser!=null && !currentUser.isEmailVerified) {
+            Toast.makeText(this@LoginActivity, "Please verify email", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@LoginActivity, RealtimeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
+        }
     }
 
     companion object {
