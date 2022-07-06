@@ -1,6 +1,5 @@
-package com.example.firebaseauth.realtimedatabase
+package com.ahad.firebasekotlin.realtime
 
-import android.util.Log
 import com.google.firebase.database.Exclude
 
 data class Author(@get:Exclude var id:String?, var name:String?,var city:String, var votes:Double){

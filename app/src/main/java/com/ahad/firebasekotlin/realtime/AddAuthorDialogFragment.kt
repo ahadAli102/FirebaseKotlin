@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ahad.firebasekotlin.R
-import com.example.firebaseauth.realtimedatabase.Author
 import kotlinx.android.synthetic.main.fragment_add_author_dialog.*
 
 
