@@ -9,4 +9,9 @@ class RealtimeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_realtime)
     }
+    override fun onStart() {
+        super.onStart()
+        overridePendingTransition(R.anim.slide_in_left,
+            R.anim.slide_out_left);
+    }
 }
