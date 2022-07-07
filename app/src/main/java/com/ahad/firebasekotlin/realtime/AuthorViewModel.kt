@@ -8,7 +8,8 @@ import com.google.firebase.database.*
 
 class AuthorViewModel : ViewModel() {
     private val dbAuthors = FirebaseDatabase
-        .getInstance().reference.child("authors")
+        .getInstance("https://fir-kotlin-efd0c-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        .reference.child("authors")
 
     private val _authors = MutableLiveData<MutableList<Author>>()
     val authors : LiveData<MutableList<Author>>
