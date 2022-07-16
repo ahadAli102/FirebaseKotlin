@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.ahad.firebasekotlin.authentication.LoginActivity
+import com.ahad.firebasekotlin.firestore.FirestoreActivity
 import com.ahad.firebasekotlin.realtime.RealtimeActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         lateinit var intent: Intent
         if (currentUser != null) {
-            intent = Intent(this@MainActivity, RealtimeActivity::class.java)
+            intent = Intent(this@MainActivity, FirestoreActivity::class.java)
             Toast.makeText(this@MainActivity, currentUser.uid, Toast.LENGTH_SHORT).show()
         } else {
             intent = Intent(this@MainActivity, LoginActivity::class.java)

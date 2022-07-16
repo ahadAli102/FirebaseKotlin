@@ -7,6 +7,7 @@ import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import com.ahad.firebasekotlin.R
+import com.ahad.firebasekotlin.firestore.FirestoreActivity
 import com.ahad.firebasekotlin.realtime.RealtimeActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
@@ -74,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this@LoginActivity, "Please verify email", Toast.LENGTH_SHORT).show()
         }else{
             Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this@LoginActivity, RealtimeActivity::class.java)
+            val intent = Intent(this@LoginActivity, FirestoreActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
