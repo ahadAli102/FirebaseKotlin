@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_edit.*
 
 
 class EditFragment : Fragment() {
+    lateinit var viewModel: FireStoreViewModel
     val args: EditFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +24,7 @@ class EditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = (activity as FirestoreActivity).viewModel
         val product = args.passedProduct
         edittext_name.append(product.name)
         edittext_desc.append(product.description)
@@ -53,10 +55,27 @@ class EditFragment : Fragment() {
             if(quant != product.quantity){
                 map["quantity"] = quant
             }
-            //product will be updated
+            viewModel.updateProduct(map,product)
         }
-        button_delete.setOnClickListener { //product will be deleted
-        }
+        button_delete.setOnClickListener {  }
+
+        viewModel.updateResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is FireStoreResponse.Success -> {
+                    response.data?.let {
+                        Toast.makeText(context, "${response.data.name} updated successfully", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+
+                is FireStoreResponse.Loading -> {
+                    Toast.makeText(context, "${product.name} updating", Toast.LENGTH_SHORT).show()
+                }
+                is FireStoreResponse.Error ->{
+                    Toast.makeText(context, "Error occur: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
 
     }
