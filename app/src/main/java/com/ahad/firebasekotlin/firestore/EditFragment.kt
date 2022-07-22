@@ -57,7 +57,7 @@ class EditFragment : Fragment() {
             }
             viewModel.updateProduct(map,product)
         }
-        button_delete.setOnClickListener {  }
+        button_delete.setOnClickListener { viewModel.deleteProduct(product) }
 
         viewModel.updateResponse.observe(viewLifecycleOwner, { response ->
             when (response) {
@@ -77,6 +77,22 @@ class EditFragment : Fragment() {
             }
         })
 
+        viewModel.deleteResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is FireStoreResponse.Success -> {
+                    response.data?.let {
+                        Toast.makeText(context, "${response.data.name} deleted successfully", Toast.LENGTH_SHORT).show()
+                        (activity as FirestoreActivity).onBackPressed()
+                    }
+                }
 
+                is FireStoreResponse.Loading -> {
+                    Toast.makeText(context, "${product.name} deleting", Toast.LENGTH_SHORT).show()
+                }
+                is FireStoreResponse.Error ->{
+                    Toast.makeText(context, "Error occur: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 }
