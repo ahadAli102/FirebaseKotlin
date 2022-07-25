@@ -10,7 +10,8 @@ import com.ahad.firebasekotlin.R
 import kotlinx.android.synthetic.main.fragment_add_order_dialog.*
 
 
-class AddOrderDialogFragment(product: Product) : DialogFragment() {
+class AddOrderDialogFragment(val product: Product) : DialogFragment() {
+    lateinit var viewModel: FireStoreViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,8 +26,22 @@ class AddOrderDialogFragment(product: Product) : DialogFragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = (activity as FirestoreActivity).viewModel
 
-
+        viewModel.insertOrderResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is FireStoreResponse.Success -> {
+                    Toast.makeText(context, "${response.data!!.name}'s order placed successfully", Toast.LENGTH_SHORT).show()
+                }
+                is FireStoreResponse.Error -> {
+                    Toast.makeText(context, "Error occur: ${response.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                is FireStoreResponse.Loading -> {
+                    Toast.makeText(context, "Placing order", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
         button_add_order.setOnClickListener {
             val name = edit_text_order_name.text.toString().trim()
@@ -47,8 +62,9 @@ class AddOrderDialogFragment(product: Product) : DialogFragment() {
                 Toast.makeText(context, "Enter amount", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            //product's order will be added
+            viewModel.insertOrder(Order("",name,location,amount,System.currentTimeMillis(),product.id))
         }
+
     }
 
     companion object {
