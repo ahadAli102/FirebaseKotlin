@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.layout_order.view.*
 class OrderAdapter : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
     private val orders = mutableListOf<Order>()
     var orderClickListener:OrderClickListener? = null
+    var orderProduct: Product?=null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
@@ -29,6 +30,7 @@ class OrderAdapter : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
         holder.itemView.order_location.text = order.location
         holder.itemView.order_amount.text = order.amount.toString()
         holder.itemView.order_buyer.text = order.name
+        holder.itemView.order_name.text = orderProduct?.name
         holder.itemView.order_edit.setOnClickListener {
             orderClickListener?.let { orderClickListener!!.onOrderCLickListener(Order.Action.EDIT, orders[position]) }
         }
