@@ -88,7 +88,7 @@ class DetailsFragment : Fragment(),OrderAdapter.OrderClickListener {
             }
             Order.Action.DELETE -> {
                 Toast.makeText(context, "${order.name} will delete", Toast.LENGTH_SHORT).show()
-                // deleted
+                viewModel.deleteOrder(order)
             }
         }
     }
