@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.ahad.firebasekotlin.R
 import kotlinx.android.synthetic.main.fragment_edit_order_dialog.*
 
 
 class EditOrderDialogFragment(private val order:Order) : DialogFragment() {
-
-
+    lateinit var viewModel: FireStoreViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -22,6 +22,23 @@ class EditOrderDialogFragment(private val order:Order) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = (activity as FirestoreActivity).viewModel
+        viewModel.updateOrderResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is FireStoreResponse.Success -> {
+                    response.data?.let {
+                        Toast.makeText(context, "Order updated", Toast.LENGTH_SHORT).show()
+                        dismiss()
+                    }
+                }
+                is FireStoreResponse.Error -> {
+                    Toast.makeText(context, "Error occur: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+                is FireStoreResponse.Loading -> {
+                    Toast.makeText(context, "Updating Order", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
         button_add_order.setOnClickListener {
             val orderMap = mutableMapOf<String,Any>()
@@ -40,7 +57,7 @@ class EditOrderDialogFragment(private val order:Order) : DialogFragment() {
                 edit_text_order_amount.requestFocus()
                 orderMap["amount"] = amount
             }
-            //order information will be edited
+            viewModel.updateOrder(orderMap,order)
         }
     }
 }
